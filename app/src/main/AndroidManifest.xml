@@ -17,7 +17,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ViewAttendanceActivity"
-            android:label="@string/title_activity_view_attendance"></activity>
+            android:label="@string/title_activity_view_attendance" />
         <activity
             android:name=".TakeAttendanceActivity"
             android:label="@string/title_activity_take_attendance" />
@@ -28,7 +28,7 @@
             android:name=".AddClassActivity"
             android:label="@string/title_activity_add_class" />
         <activity
-            android:name=".MainActivity"
+            android:name=".HomeActivity"
             android:label="@string/title_activity_main" />
         <activity
             android:name=".LoginActivity"
@@ -36,7 +36,6 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

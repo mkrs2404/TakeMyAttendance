@@ -1,6 +1,7 @@
 package com.example.takemyattendance;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
@@ -28,6 +29,15 @@ public interface StudentDao {
 
     @Update
     public void updateAttendanceData(ArrayList<StudentBatchDbClass> attendanceData);
+
+    @Query("DELETE FROM ClassData WHERE subName = :subName and subCode = :subCode and stream = :stream and section = :section and batch = :batch and sem = :sem")
+    public void deleteClassData(String subName, String subCode, String stream, String section, String batch, String sem);
+
+    @Query("DELETE FROM StudentBatchDbClass WHERE subName = :subName and subCode = :subCode and stream = :stream and section = :section and batch = :batch and sem = :sem")
+    public void deleteStudentBatchDbClass(String subName, String subCode, String stream, String section, String batch, String sem);
+
+    @Query("DELETE FROM TopicDbClass WHERE subName = :subName and subCode = :subCode and stream = :stream and section = :section and batch = :batch and sem = :sem")
+    public void deleteTopicDbClass(String subName, String subCode, String stream, String section, String batch, String sem);
 
 
 }

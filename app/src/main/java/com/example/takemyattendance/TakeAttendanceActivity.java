@@ -53,7 +53,7 @@ public class TakeAttendanceActivity extends AppCompatActivity implements DataTra
         section = bundle.getString("section");
         topic = bundle.getString("topic");
         period = bundle.getString("period");
-        studentList = (ArrayList<StudentBatchDbClass>) MainActivity.attendanceDatabase.studentDao().loadStudents(subName,subCode,stream,section,batch,sem);
+        studentList = (ArrayList<StudentBatchDbClass>) HomeActivity.attendanceDatabase.studentDao().loadStudents(subName,subCode,stream,section,batch,sem);
 
         TakeAttendanceAdapter adapter = new TakeAttendanceAdapter(TakeAttendanceActivity.this, R.layout.take_attendance_card, studentList,this);
         mListView.setAdapter(adapter);
@@ -70,6 +70,7 @@ public class TakeAttendanceActivity extends AppCompatActivity implements DataTra
     public void onSetValues(boolean[] al) {
         attendanceRecord = al;
     }
+
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
@@ -77,7 +78,7 @@ public class TakeAttendanceActivity extends AppCompatActivity implements DataTra
                 for(boolean b:attendanceRecord){
                     Log.e("TakeAttendanceActivity", String.valueOf(b));
                 }
-               // attendedAndTotalClasses = (ArrayList<Integer>) MainActivity.attendanceDatabase.studentDao().loadTotalAndAttendedClasses(subName, subCode, stream, section, batch, sem);
+               // attendedAndTotalClasses = (ArrayList<Integer>) HomeActivity.attendanceDatabase.studentDao().loadTotalAndAttendedClasses(subName, subCode, stream, section, batch, sem);
                 for(StudentBatchDbClass student:studentList){
                     classes = 0;
                     if(attendanceRecord[i] == true)
@@ -87,11 +88,11 @@ public class TakeAttendanceActivity extends AppCompatActivity implements DataTra
                     updatedAttendanceData.add(new StudentBatchDbClass(subName, subCode, stream, section, batch, sem, student.getRoll(),student.getName(), student.getPhone(),student.getEmail(),student.getParent_phone(),attendedClasses + classes, totalClasses + Integer.parseInt(period)));
                     i++;
                 }
-                MainActivity.attendanceDatabase.studentDao().updateAttendanceData(updatedAttendanceData);
+                HomeActivity.attendanceDatabase.studentDao().updateAttendanceData(updatedAttendanceData);
                 SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
                 currentDateandTime = sdf.format(new Date());
-                MainActivity.attendanceDatabase.studentDao().addClassForToday(new TopicDbClass(subName, subCode, stream, section, batch, sem, currentDateandTime, topic, period));
-                intent = new Intent(this,MainActivity.class);
+                HomeActivity.attendanceDatabase.studentDao().addClassForToday(new TopicDbClass(subName, subCode, stream, section, batch, sem, currentDateandTime, topic, period));
+                intent = new Intent(this, HomeActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 Toast.makeText(this,"Attendance Record saved.",Toast.LENGTH_SHORT).show();

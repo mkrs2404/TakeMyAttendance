@@ -95,7 +95,7 @@ public class ImportExcelActivity extends AppCompatActivity {
                     if(FilenameUtils.getExtension(currentDirectory).toLowerCase().equals("xlsx"))
                         readExcelData(currentDirectory);
                     else
-                        toastMessage("Invalid File");
+                        toastMessage("Invalid File. Required: xlsx");
 
                 } else {
                     count++;
@@ -106,11 +106,18 @@ public class ImportExcelActivity extends AppCompatActivity {
             }
         });
 
+//        count = 0;
+//        pathHistory = new ArrayList<String>();
+//        pathHistory.add(count, System.getenv("EXTERNAL_STORAGE"));
+//        Log.d(TAG, "btnSDCard: " + pathHistory.get(count));
+//        checkInternalStorage();
+
         btnUpDirectory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (count == 0) {
                     Log.d(TAG, "btnUpDirectory: You have reached the highest level directory.");
+                    toastMessage("Highest Directory");
                 } else {
                     pathHistory.remove(count);
                     count--;
@@ -129,6 +136,7 @@ public class ImportExcelActivity extends AppCompatActivity {
                 pathHistory.add(count, System.getenv("EXTERNAL_STORAGE"));
                 Log.d(TAG, "btnSDCard: " + pathHistory.get(count));
                 checkInternalStorage();
+                toastMessage("Refreshed");
             }
         });
 
@@ -205,18 +213,18 @@ public class ImportExcelActivity extends AppCompatActivity {
                 uploadData.add(new StudentBatchDbClass(subName, subCode, stream, section, batch, sem, roll, name, phone, email, parent_phone,0,0));
             }
             try {
-                MainActivity.attendanceDatabase.studentDao().addBatch(uploadData);
-                MainActivity.attendanceDatabase.studentDao().addClass(new ClassData(subName, subCode, stream, section, batch, sem));
+                HomeActivity.attendanceDatabase.studentDao().addBatch(uploadData);
+                HomeActivity.attendanceDatabase.studentDao().addClass(new ClassData(subName, subCode, stream, section, batch, sem));
 //                for(StudentBatchDbClass student: uploadData) {
 //                    attendanceData.add(new AttendanceDbClass(subName, subCode, stream, section, batch, sem, student.getRoll(), student.getName(), 0,0));
 //                }
-//                MainActivity.attendanceDatabase.studentDao().addAttendanceForToday(attendanceData);
+//                HomeActivity.attendanceDatabase.studentDao().addAttendanceForToday(attendanceData);
                 toastMessage("Batch added successfully");
             }
             catch(SQLiteConstraintException e){
                 toastMessage("Unique Constraint failed! Please check for duplicate entries.");
             }
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, HomeActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         }

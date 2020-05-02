@@ -38,7 +38,7 @@ public class ViewAttendanceActivity extends AppCompatActivity {
         stream = bundle.getString("stream");
         section = bundle.getString("section");
 
-        attendanceList = (ArrayList<StudentBatchDbClass>) MainActivity.attendanceDatabase.studentDao().loadStudents(subName,subCode,stream,section,batch,sem);
+        attendanceList = (ArrayList<StudentBatchDbClass>) HomeActivity.attendanceDatabase.studentDao().loadStudents(subName,subCode,stream,section,batch,sem);
         totalClassesTextView.setText("Total Classes : " + attendanceList.get(0).getTotalClasses());
         ViewAttendanceAdapter adapter = new ViewAttendanceAdapter(ViewAttendanceActivity.this, R.layout.view_attendance_card, attendanceList);
         mListView.setAdapter(adapter);

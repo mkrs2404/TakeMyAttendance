@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 
 public class CustomListAdapter  extends ArrayAdapter<ClassData> {
 
-//    customButtonListener customListener;
+//
 //
 //    public interface customButtonListener {
 //        public void onButtonClickListener(int position,String value);
@@ -30,6 +31,8 @@ public class CustomListAdapter  extends ArrayAdapter<ClassData> {
 //    public void setCustomButtonListener(customButtonListener listener) {
 //        this.customListener = listener;
 //    }
+
+    CustomButtonListener customListener;
 
     private static final String TAG = "CustomListAdapter";
 
@@ -48,12 +51,14 @@ public class CustomListAdapter  extends ArrayAdapter<ClassData> {
         TextView section;
         Button takeAttendance;
         Button viewAttendance;
+        ImageButton deleteCard;
     }
 
-    public CustomListAdapter(Context context, int resource, ArrayList<ClassData> objects) {
+    public CustomListAdapter(Context context, int resource, ArrayList<ClassData> objects, CustomButtonListener customListener) {
         super(context, resource, objects);
         mContext = context;
         mResource = resource;
+        this.customListener = customListener;
     }
 
     @NonNull
@@ -87,6 +92,7 @@ public class CustomListAdapter  extends ArrayAdapter<ClassData> {
                 holder.batch = convertView.findViewById(R.id.batch);
                 holder.takeAttendance = convertView.findViewById(R.id.takeAttendance);
                 holder.viewAttendance = convertView.findViewById(R.id.viewAttendance);
+                holder.deleteCard = convertView.findViewById(R.id.deleteCard);
 
                 holder.takeAttendance.setOnClickListener(new View.OnClickListener()
                 {
@@ -127,6 +133,13 @@ public class CustomListAdapter  extends ArrayAdapter<ClassData> {
                         intent.putExtras(bundle);
                         mContext.startActivity(intent);
                         //Toast.makeText(getContext(), "View Attendance from row " + position + " was pressed", Toast.LENGTH_LONG).show();
+                    }
+                });
+
+                holder.deleteCard.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        customListener.onButtonClickListener(subName,subCode,stream,section,batch,sem);
                     }
                 });
 

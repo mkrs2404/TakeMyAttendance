@@ -37,7 +37,8 @@
             android:layout_height="50dp"
             app:cardCornerRadius="8dp"
             android:elevation="10dp"
-            app:cardUseCompatPadding="true">
+            app:cardUseCompatPadding="true"
+            app:cardBackgroundColor="@color/loginScreenBackground">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -53,6 +54,7 @@
                     android:gravity="center_vertical|left"
                     android:paddingLeft="20dp"
                     android:text="Roll No."
+                    android:textColor="#FFFFFF"
                     android:textStyle="bold">
                 </TextView>
 
@@ -64,6 +66,7 @@
                     android:gravity="center_vertical|left"
                     android:paddingLeft="20dp"
                     android:text="Name"
+                    android:textColor="#FFFFFF"
                     android:textStyle="bold">
                 </TextView>
 
@@ -74,6 +77,7 @@
                     android:layout_weight="2"
                     android:gravity="center_vertical|left"
                     android:text="Attended Classes"
+                    android:textColor="#FFFFFF"
                     android:textStyle="bold">
                 </TextView>
 
@@ -85,6 +89,7 @@
                     android:gravity="center_vertical|right"
                     android:paddingRight="15dp"
                     android:text="Percentage"
+                    android:textColor="#FFFFFF"
                     android:textStyle="bold">
                 </TextView>
             </LinearLayout>
