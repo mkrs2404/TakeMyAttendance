@@ -3,6 +3,7 @@ package com.example.takemyattendance;
 import android.Manifest;
 import android.content.Intent;
 import android.database.sqlite.SQLiteConstraintException;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -12,9 +13,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
@@ -60,13 +64,46 @@ public class ImportExcelActivity extends AppCompatActivity {
     String sem;
     String stream;
     String section;
+    RelativeLayout relativeLayout;
+
+    class ReadExcelTask extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected void onPreExecute()
+        {
+            super.onPreExecute();
+            Snackbar snackbar = Snackbar
+                    .make(relativeLayout, "Please wait while we fetch data.", Snackbar.LENGTH_LONG);
+            snackbar.show();
+        }
+        @Override
+        protected String doInBackground(Void... arg0)
+        {
+            try {
+                readExcelData(currentDirectory);
+            }
+            catch(Exception e){
+                Log.e(TAG, e.toString());
+                toastMessage("Error in Fetching Data. Please try again.");
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result)
+        {
+            super.onPostExecute(result);
+            toastMessage("Batch added successfully");
+        }
+    }
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_import_excel);
-        lvInternalStorage = (ListView) findViewById(R.id.lvInternalStorage);
+        relativeLayout = findViewById(R.id.relativeLayoutImportExcel);
+        lvInternalStorage = findViewById(R.id.lvInternalStorage);
         btnUpDirectory = findViewById(R.id.btnUpDirectory);
         btnSDCard = findViewById(R.id.btnViewSDCard);
         uploadData = new ArrayList<>();
@@ -93,7 +130,7 @@ public class ImportExcelActivity extends AppCompatActivity {
                     //Execute method for reading the excel data.
                     Log.d(TAG, "File Selected has extension: "+ FilenameUtils.getExtension(currentDirectory));
                     if(FilenameUtils.getExtension(currentDirectory).toLowerCase().equals("xlsx"))
-                        readExcelData(currentDirectory);
+                        new ReadExcelTask().execute();
                     else
                         toastMessage("Invalid File. Required: xlsx");
 
@@ -106,11 +143,12 @@ public class ImportExcelActivity extends AppCompatActivity {
             }
         });
 
-//        count = 0;
-//        pathHistory = new ArrayList<String>();
-//        pathHistory.add(count, System.getenv("EXTERNAL_STORAGE"));
-//        Log.d(TAG, "btnSDCard: " + pathHistory.get(count));
-//        checkInternalStorage();
+        //Populating the list view
+        count = 0;
+        pathHistory = new ArrayList<String>();
+        pathHistory.add(count, System.getenv("EXTERNAL_STORAGE"));
+        Log.d(TAG, "OutsideBtnSDCard: " + pathHistory.get(count));
+        checkInternalStorage();
 
         btnUpDirectory.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,12 +169,11 @@ public class ImportExcelActivity extends AppCompatActivity {
         btnSDCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                count = 0;
-                pathHistory = new ArrayList<String>();
+//                count = 0;
+//                pathHistory = new ArrayList<String>();
                 pathHistory.add(count, System.getenv("EXTERNAL_STORAGE"));
                 Log.d(TAG, "btnSDCard: " + pathHistory.get(count));
                 checkInternalStorage();
-                toastMessage("Refreshed");
             }
         });
 
@@ -215,11 +252,7 @@ public class ImportExcelActivity extends AppCompatActivity {
             try {
                 HomeActivity.attendanceDatabase.studentDao().addBatch(uploadData);
                 HomeActivity.attendanceDatabase.studentDao().addClass(new ClassData(subName, subCode, stream, section, batch, sem));
-//                for(StudentBatchDbClass student: uploadData) {
-//                    attendanceData.add(new AttendanceDbClass(subName, subCode, stream, section, batch, sem, student.getRoll(), student.getName(), 0,0));
-//                }
-//                HomeActivity.attendanceDatabase.studentDao().addAttendanceForToday(attendanceData);
-                toastMessage("Batch added successfully");
+                HomeActivity.attendanceDatabase.close();
             }
             catch(SQLiteConstraintException e){
                 toastMessage("Unique Constraint failed! Please check for duplicate entries.");
@@ -280,7 +313,13 @@ public class ImportExcelActivity extends AppCompatActivity {
                 Log.d(TAG, "checkInternalStorage: directory path: " + pathHistory.get(count));
             }
 
-            listFile = file.listFiles();
+            try{
+                listFile = file.listFiles();
+                Log.e(TAG,String.valueOf(listFile.length));
+            }catch (NullPointerException npe){
+                Log.e(TAG,file.getAbsolutePath() + " " + file.canRead());
+                Log.e(TAG,"listFiles() not working.");
+            }
 
             // Create a String array for FilePathStrings
             FilePathStrings = new String[listFile.length];
@@ -300,7 +339,7 @@ public class ImportExcelActivity extends AppCompatActivity {
                 Log.d("Files", "FileName:" + listFile[i].getName());
             }
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, FilePathStrings);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, FilePathStrings);
             lvInternalStorage.setAdapter(adapter);
 
         }catch(NullPointerException e){

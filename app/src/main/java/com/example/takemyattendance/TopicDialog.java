@@ -25,6 +25,7 @@ public class TopicDialog extends DialogFragment {
         topicEditText = DialogView.findViewById(R.id.topic);
         periodEditText = DialogView.findViewById(R.id.period);
         builder.setView(DialogView)
+                .setTitle("Class Details")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         String topic = topicEditText.getText().toString();

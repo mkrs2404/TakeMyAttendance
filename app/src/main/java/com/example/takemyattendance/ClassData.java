@@ -18,6 +18,18 @@ public class ClassData {
     @NonNull
     private String sem;
 
+    @Override
+    public String toString() {
+        return "ClassData{" +
+                "subName='" + subName + '\'' +
+                ", subCode='" + subCode + '\'' +
+                ", stream='" + stream + '\'' +
+                ", section='" + section + '\'' +
+                ", batch='" + batch + '\'' +
+                ", sem='" + sem + '\'' +
+                '}';
+    }
+
     public ClassData(String subName, String subCode, String stream, String section, String batch, String sem) {
         this.subName = subName;
         this.subCode = subCode;

@@ -1,7 +1,5 @@
 package com.example.takemyattendance;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +9,8 @@ import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,6 +19,7 @@ public class TakeAttendanceActivity extends AppCompatActivity implements DataTra
 
     ArrayList<StudentBatchDbClass> studentList;
     ArrayList<StudentBatchDbClass> updatedAttendanceData = new ArrayList<>();
+    ArrayList<DailyAttendanceDbClass> dailyAttendanceDbClasses = new ArrayList<>();
     boolean[] attendanceRecord;
     private ListView mListView;
     Bundle bundle;
@@ -78,20 +79,23 @@ public class TakeAttendanceActivity extends AppCompatActivity implements DataTra
                 for(boolean b:attendanceRecord){
                     Log.e("TakeAttendanceActivity", String.valueOf(b));
                 }
+                SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+                currentDateandTime = sdf.format(new Date());
                // attendedAndTotalClasses = (ArrayList<Integer>) HomeActivity.attendanceDatabase.studentDao().loadTotalAndAttendedClasses(subName, subCode, stream, section, batch, sem);
                 for(StudentBatchDbClass student:studentList){
                     classes = 0;
-                    if(attendanceRecord[i] == true)
+                    if(attendanceRecord[i])
                         classes = Integer.parseInt(period);
                     attendedClasses = student.getAttendedClasses();
                     totalClasses = student.getTotalClasses();
+                    dailyAttendanceDbClasses.add(new DailyAttendanceDbClass(subName, subCode, stream, section, batch, sem, student.getRoll(),student.getName(), student.getPhone(),student.getEmail(),student.getParent_phone(),currentDateandTime,topic,classes,Integer.parseInt(period)));
                     updatedAttendanceData.add(new StudentBatchDbClass(subName, subCode, stream, section, batch, sem, student.getRoll(),student.getName(), student.getPhone(),student.getEmail(),student.getParent_phone(),attendedClasses + classes, totalClasses + Integer.parseInt(period)));
                     i++;
                 }
                 HomeActivity.attendanceDatabase.studentDao().updateAttendanceData(updatedAttendanceData);
-                SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-                currentDateandTime = sdf.format(new Date());
                 HomeActivity.attendanceDatabase.studentDao().addClassForToday(new TopicDbClass(subName, subCode, stream, section, batch, sem, currentDateandTime, topic, period));
+                HomeActivity.attendanceDatabase.studentDao().addClassToDailyAttendance(dailyAttendanceDbClasses);
+                HomeActivity.attendanceDatabase.close();
                 intent = new Intent(this, HomeActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);

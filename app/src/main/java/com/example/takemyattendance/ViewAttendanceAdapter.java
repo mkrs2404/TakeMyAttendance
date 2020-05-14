@@ -39,9 +39,10 @@ public class ViewAttendanceAdapter extends ArrayAdapter<StudentBatchDbClass> {
         String name = getItem(position).getName();
         String roll = getItem(position).getRoll();
         int attendedClasses = getItem(position).getAttendedClasses();
+        int totalClasses = getItem(position).getTotalClasses();
         double percentage;
         try {
-            percentage = (attendedClasses / getItem(position).getTotalClasses())*100;
+            percentage = ((double)attendedClasses / totalClasses)*100;
         }
         catch(java.lang.ArithmeticException e){
             percentage = 0;

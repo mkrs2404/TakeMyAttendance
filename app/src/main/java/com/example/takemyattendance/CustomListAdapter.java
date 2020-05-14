@@ -11,7 +11,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
@@ -21,16 +20,6 @@ import androidx.fragment.app.FragmentManager;
 import java.util.ArrayList;
 
 public class CustomListAdapter  extends ArrayAdapter<ClassData> {
-
-//
-//
-//    public interface customButtonListener {
-//        public void onButtonClickListener(int position,String value);
-//    }
-//
-//    public void setCustomButtonListener(customButtonListener listener) {
-//        this.customListener = listener;
-//    }
 
     CustomButtonListener customListener;
 
@@ -52,7 +41,9 @@ public class CustomListAdapter  extends ArrayAdapter<ClassData> {
         Button takeAttendance;
         Button viewAttendance;
         ImageButton deleteCard;
+        ImageButton downloadCard;
     }
+
 
     public CustomListAdapter(Context context, int resource, ArrayList<ClassData> objects, CustomButtonListener customListener) {
         super(context, resource, objects);
@@ -72,6 +63,14 @@ public class CustomListAdapter  extends ArrayAdapter<ClassData> {
         final String sem = getItem(position).getSem();
         final String section = getItem(position).getSection();
         final String batch = getItem(position).getBatch();
+
+        Bundle bundle = new Bundle();
+        bundle.putString("subName", subName);
+        bundle.putString("subCode", subCode);
+        bundle.putString("batch", batch);
+        bundle.putString("sem", sem);
+        bundle.putString("stream", stream);
+        bundle.putString("section", section);
 
         try{
             //create the view result for showing the animation
@@ -93,26 +92,18 @@ public class CustomListAdapter  extends ArrayAdapter<ClassData> {
                 holder.takeAttendance = convertView.findViewById(R.id.takeAttendance);
                 holder.viewAttendance = convertView.findViewById(R.id.viewAttendance);
                 holder.deleteCard = convertView.findViewById(R.id.deleteCard);
+                holder.downloadCard = convertView.findViewById(R.id.downloadCard);
 
                 holder.takeAttendance.setOnClickListener(new View.OnClickListener()
                 {
                     @Override
                     public void onClick(View v)
                     {
-                        //Intent intent = new Intent(mContext,TakeAttendanceActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putString("subName", subName);
-                        bundle.putString("subCode", subCode);
-                        bundle.putString("batch", batch);
-                        bundle.putString("sem", sem);
-                        bundle.putString("stream", stream);
-                        bundle.putString("section", section);
                         DialogFragment newFragment = new TopicDialog();
                         FragmentActivity activity = (FragmentActivity)(mContext);
                         FragmentManager fm = activity.getSupportFragmentManager();
                         newFragment.setArguments(bundle);
                         newFragment.show(fm,"topicdialog");
-                        //mContext.startActivity(intent);
 
                     }
                 });
@@ -122,25 +113,20 @@ public class CustomListAdapter  extends ArrayAdapter<ClassData> {
                     @Override
                     public void onClick(View v)
                     {
-                        Bundle bundle = new Bundle();
-                        bundle.putString("subName", subName);
-                        bundle.putString("subCode", subCode);
-                        bundle.putString("batch", batch);
-                        bundle.putString("sem", sem);
-                        bundle.putString("stream", stream);
-                        bundle.putString("section", section);
                         Intent intent = new Intent(mContext,ViewAttendanceActivity.class);
                         intent.putExtras(bundle);
                         mContext.startActivity(intent);
-                        //Toast.makeText(getContext(), "View Attendance from row " + position + " was pressed", Toast.LENGTH_LONG).show();
                     }
                 });
 
-                holder.deleteCard.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        customListener.onButtonClickListener(subName,subCode,stream,section,batch,sem);
-                    }
+                holder.deleteCard.setOnClickListener(v -> customListener.onButtonClickListener(subName,subCode,stream,section,batch,sem));
+
+                holder.downloadCard.setOnClickListener(v -> {
+                    DialogFragment newFragment = new DatePickerDialogFragment();
+                    newFragment.setArguments(bundle);
+                    FragmentActivity activity = (FragmentActivity)(mContext);
+                    FragmentManager fm = activity.getSupportFragmentManager();
+                    newFragment.show(fm,"datePickerDialog");
                 });
 
                 result = convertView;
