@@ -46,9 +46,11 @@ public class DatePickerDialogFragment extends DialogFragment {
         builder.setView(DialogView)
                 .setPositiveButton("OK", (dialog, id) -> {
                     DatePickerDialogFragment.this.getDialog().cancel();
-                    Intent intent = new Intent(getContext(), ExportDataActivity.class);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
+                    if(!startDate.getText().toString().isEmpty() && !endDate.getText().toString().isEmpty()) {
+                        Intent intent = new Intent(getContext(), ExportDataActivity.class);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
+                    }
                 })
                 .setNegativeButton("Cancel", (dialog, id) -> DatePickerDialogFragment.this.getDialog().cancel())
                 .setTitle("Select Date");

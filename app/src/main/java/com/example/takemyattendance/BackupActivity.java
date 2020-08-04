@@ -176,7 +176,6 @@ public class BackupActivity extends AppCompatActivity {
         FileContent mediaContent = new FileContent("",filePath);
         FileContent mediaContentShm = new FileContent("",filePathShm);
         FileContent mediaContentWal = new FileContent("",filePathWal);
-        Log.e(TAG,"Before Upload");
         try {
             /** To check if backup was modified from other device **/
             backupModified = isBackupModified();
@@ -223,7 +222,6 @@ public class BackupActivity extends AppCompatActivity {
 
     private void Download(){
         try {
-            Log.e(TAG,"Inside Download");
             HomeActivity.attendanceDatabase.close();
             java.io.File dir = new java.io.File("/data/data/com.example.takemyattendance/databases");
             if (dir.isDirectory())
@@ -234,10 +232,6 @@ public class BackupActivity extends AppCompatActivity {
                     new java.io.File(dir, children[i]).delete();
                 }
             }
-//            googleDriveService.files().delete("1XvMATiRuu9vsU3p8BSUZy-s5HnSFIbbjY0gHpx5O8vPsCz14DQ").execute();
-//            googleDriveService.files().delete("1WKKz0JlOIGkj1UUZpY5wzvIGn5xbaZbVqIgGTCqpza6fFdUQDQ").execute();
-//            googleDriveService.files().delete("1GQ7Vzcp_SajMpe02MP6FLGODs5C2AAh2c9FiaHm2q0l-hMS9Pw").execute();
-//            googleDriveService.files().delete("1_evDYLuck9kebk0-jA0gzq-ThNsBOw-LoOnPGIaeS0kwyWTReA").execute();
 
             FileList files = googleDriveService.files().list()
                     .setSpaces("appDataFolder")
